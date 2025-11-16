@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trombetas e Festas - Cadastro</title>
+    <!-- Incluir Bootstrap (Tema Dark Mode) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Ícones do Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        /* Estilos Personalizados para o Tema Escuro */
+        body {
+            background-color: #121212; /* Fundo Escuro Principal */
+            color: #e0e0e0; /* Cor do texto claro */
+            min-height: 100vh;
+        }
+        .container {
+            padding-top: 40px;
+            padding-bottom: 40px; 
+        }
+        .card-custom {
+            background-color: #1e1e1e; /* Fundo mais escuro para o card */
+            border: 1px solid #333;
+            color: #e0e0e0;
+        }
+        .form-control, .form-select {
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            border-color: #555;
+        }
+        .form-control::placeholder, .form-select option {
+            color: #999;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #383838;
+            color: #e0e0e0;
+            border-color: #777;
+            box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5);
+        }
+        /* Cor de texto forçada para o <select> no modo escuro */
+        .form-select {
+            color: #e0e0e0;
+        }
+        .form-select option {
+            color: #e0e0e0; 
+            background-color: #1e1e1e; /* Garante que as opções sejam escuras */
+        }
+        /* Estilo para o campo de senha com ícone */
+        .password-input-group {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            z-index: 10;
+        }
+        .password-toggle:hover {
+            color: #e0e0e0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                
+                <!-- O CARTÃO PRINCIPAL ENGLOBANDO AS DUAS VIEWS -->
+                <div class="card card-custom shadow-lg">
+                    <div class="card-body p-4 p-md-5">
+                        
+                        <!-- 1. VIEW DE CADASTRO (VISÍVEL POR PADRÃO) -->
+                        <div id="cadastroView">
+                            <h3 class="card-title text-center mb-4 text-warning">Trombetas e Festas</h3>
+                            <p class="text-center text-warning mb-4">Registro de Visitante</p>
+                            <hr class="border-secondary-subtle">
+                            
+                            <form id="cadastroForm">
+                                
+                                <!-- Nome do Membro -->
+                                <div class="mb-3">
+                                    <label for="nomeMembro" class="form-label">Nome do Membro (Quem Convida)</label>
+                                    <input type="text" class="form-control" id="nomeMembro" required placeholder="Seu Nome Completo">
+                                </div>
+
+                                <!-- Grupo do Membro (LISTA SUSPENSA) -->
+                                <div class="mb-3">
+                                    <label for="grupoMembro" class="form-label">Seu Grupo</label>
+                                    <select class="form-select" id="grupoMembro" required>
+                                        <option value="">Selecione um Grupo</option>
+                                        <option value="Grupo 1">Grupo 1</option>
+                                        <option value="Grupo 2">Grupo 2</option>
+                                        <option value="Grupo 3">Grupo 3</option>
+                                        <option value="Grupo 4">Grupo 4</option>
+                                    </select>
+                                </div>
+                                
+                                <hr class="border-secondary-subtle my-4">
+
+                                <!-- Nome Completo do Visitante -->
+                                <div class="mb-3">
+                                    <label for="nomeVisitante" class="form-label">Nome Completo do Visitante</label>
+                                    <input type="text" class="form-control" id="nomeVisitante" required placeholder="Nome do Convidado">
+                                </div>
+                                
+                                <!-- Telefone do Visitante -->
+                                <div class="mb-4">
+                                    <label for="telefoneVisitante" class="form-label">Telefone do Visitante</label>
+                                    <input type="tel" class="form-control" id="telefoneVisitante" required placeholder="(XX) XXXXX-XXXX">
+                                </div>
+                                
+                                <!-- Botão de Cadastro -->
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                        <i class="bi bi-send-fill"></i> Salvar Cadastro
+                                    </button>
+                                </div>
+                                <div id="cadastroMessage" class="mt-3 text-center"></div>
+                                
+                                <!-- BOTÃO DE ACESSO ADMIN (Amarelo) -->
+                                <div class="text-center mt-4">
+                                    <button type="button" class="btn btn-sm btn-warning text-dark" id="adminAccessBtn">
+                                        <i class="bi bi-person-fill-lock"></i> Acesso Admin
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                            
+                        <!-- 2. VIEW DE ADMIN/LOGIN (ESCONDIDA POR PADRÃO) -->
+                        <div id="adminView" style="display: none;">
+                            <h3 class="card-title text-center mb-4">Área Administrativa</h3>
+                            
+                            <!-- Container de Login -->
+                            <div id="loginContainer" class="col-md-8 mx-auto">
+                                <p class="text-center text-muted mb-4">Acesso Exclusivo</p>
+                                <form id="loginForm">
+                                    <div class="mb-3">
+                                        <label for="adminEmail" class="form-label">E-mail</label>
+                                        <!-- Placeholder atualizado para o email fornecido -->
+                                        <input type="email" class="form-control" id="adminEmail" required placeholder="secretaria.ls@gmail.com">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="adminPassword" class="form-label">Senha</label>
+                                        <!-- CAMPO DE SENHA COM ÍCONE DE TOGGLE -->
+                                        <div class="password-input-group">
+                                            <input type="password" class="form-control" id="adminPassword" required placeholder="********">
+                                            <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="bi bi-box-arrow-in-right"></i> Entrar
+                                        </button>
+                                        <p class="text-center text-danger mt-2" id="loginError"></p>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Container do Relatório (Aparece após o Login) -->
+                            <div id="reportContainer" style="display: none;">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h4 class="mb-0">Relatório Completo de Cadastros</h4>
+                                    <button class="btn btn-outline-light btn-sm" id="logoutBtn">
+                                        <i class="bi bi-box-arrow-left"></i> Sair
+                                    </button>
+                                </div>
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Membro</th>
+                                                <th>Grupo</th>
+                                                <th>Visitante</th>
+                                                <th>Telefone</th>
+                                                <th>Ações</th> <!-- Nova Coluna para Ações -->
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reportBody">
+                                            <!-- Os dados serão inseridos aqui pelo JavaScript -->
+                                            <tr><td colspan="5" class="text-center text-muted">Faça login para ver o relatório.</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- BOTÃO DE VOLTAR PARA CADASTRO (Amarelo) -->
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-sm btn-warning text-dark" id="backToCadastroBtn">
+                                    <i class="bi bi-arrow-left-circle"></i> Voltar para Cadastro
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Edição (Adicionado para a funcionalidade de Edição) -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-custom">
+                <div class="modal-header border-bottom border-secondary-subtle">
+                    <h5 class="modal-title" id="editModalLabel">Editar Visitante</h5>
+                    <!-- btn-close-white para melhor contraste no tema dark -->
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <input type="hidden" id="editDocId">
+                        <div class="mb-3">
+                            <label for="editNomeMembro" class="form-label">Membro (Quem Convida)</label>
+                            <input type="text" class="form-control" id="editNomeMembro" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editGrupoMembro" class="form-label">Grupo</label>
+                            <select class="form-select" id="editGrupoMembro" required>
+                                <!-- As opções devem ser as mesmas do formulário de cadastro -->
+                                <option value="Grupo 1">Grupo 1</option>
+                                <option value="Grupo 2">Grupo 2</option>
+                                <option value="Grupo 3">Grupo 3</option>
+                                <option value="Grupo 4">Grupo 4</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editNomeVisitante" class="form-label">Nome do Visitante</label>
+                            <input type="text" class="form-control" id="editNomeVisitante" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTelefoneVisitante" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="editTelefoneVisitante" required>
+                        </div>
+                        <p id="editMessage" class="text-center mt-3 text-success"></p>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary-subtle">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="saveEditBtn"><i class="bi bi-save"></i> Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Script do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <!-- SDKs do Firebase (Modular v9+) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        // IMPORTAÇÕES ATUALIZADAS: Adicionado doc, deleteDoc, updateDoc
+        import { getFirestore, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        
+        // Variáveis globais para Firebase e UI
+        let db;
+        let auth;
+        // Variável global para armazenar os dados do relatório para edição
+        let currentReportData = new Map();
+
+        // SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLYSp2w4OWO4lPzbeGX3Cwhyt1PH-W4Tw",
+            authDomain: "cadastros-74b7b.firebaseapp.com",
+            projectId: "cadastros-74b7b",
+            storageBucket: "cadastros-74b7b.firebasestorage.app",
+            messagingSenderId: "687281228020",
+            appId: "1:687281228020:web:dc268fbecda58e520f36a1",
+            measurementId: "G-HHD7M6DPMY"
+        };
+        // FIM DA CONFIGURAÇÃO
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+        
+        // --- VARIÁVEIS DA INTERFACE (VIEWS) ---
+        const cadastroView = document.getElementById('cadastroView');
+        const adminView = document.getElementById('adminView');
+        const adminAccessBtn = document.getElementById('adminAccessBtn');
+        const backToCadastroBtn = document.getElementById('backToCadastroBtn');
+        
+        // Lógica de Alternância de Visualização
+        adminAccessBtn.addEventListener('click', () => {
+            cadastroView.style.display = 'none';
+            adminView.style.display = 'block';
+        });
+
+        backToCadastroBtn.addEventListener('click', () => {
+            adminView.style.display = 'none';
+            cadastroView.style.display = 'block';
+        });
+
+        // --- FUNÇÕES DE INTERFACE E LÓGICA DO FORMULÁRIO ---
+        
+        const grupoMembroInput = document.getElementById('grupoMembro'); // Elemento <select>
+        const cadastroForm = document.getElementById('cadastroForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const cadastroMessage = document.getElementById('cadastroMessage');
+
+        // 1. Lógica para Salvar Cadastro no Firestore
+        cadastroForm.addEventListener('submit', async function(e) { 
+            e.preventDefault();
+            
+            // Verifica se a opção "Selecione um Grupo" (value="") foi selecionada
+            if (!grupoMembroInput.value) {
+                cadastroMessage.className = 'mt-3 text-center text-danger';
+                cadastroMessage.textContent = "Por favor, selecione seu grupo na lista suspensa.";
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Salvando...";
+            cadastroMessage.textContent = "";
+
+            const dadosCadastro = {
+                nomeMembro: document.getElementById('nomeMembro').value,
+                grupoMembro: grupoMembroInput.value,
+                nomeVisitante: document.getElementById('nomeVisitante').value,
+                telefoneVisitante: document.getElementById('telefoneVisitante').value,
+                dataCadastro: serverTimestamp()
+            };
+
+            try {
+                // Adiciona o documento à coleção 'cadastros'
+                await addDoc(collection(db, "cadastros"), dadosCadastro);
+                
+                cadastroMessage.className = 'mt-3 text-center text-success';
+                cadastroMessage.textContent = "✅ Cadastro enviado com sucesso!";
+                
+                cadastroForm.reset(); 
+                
+            } catch (error) {
+                console.error("Erro ao salvar cadastro: ", error);
+                console.error("Código de erro do Firebase:", error.code); 
+                cadastroMessage.className = 'mt-3 text-center text-danger';
+                cadastroMessage.textContent = "❌ Ocorreu um erro ao enviar o cadastro. Verifique a conexão.";
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-send-fill"></i> Salvar Cadastro';
+            }
+        });
+
+        // --- FUNÇÕES DE AUTENTICAÇÃO E RELATÓRIO DO ADMIN ---
+
+        const loginForm = document.getElementById('loginForm');
+        const loginContainer = document.getElementById('loginContainer');
+        const reportContainer = document.getElementById('reportContainer');
+        const loginError = document.getElementById('loginError');
+        const reportBody = document.getElementById('reportBody');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        
+        // Elementos do Modal de Edição
+        const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+        const editDocIdInput = document.getElementById('editDocId');
+        const editNomeMembroInput = document.getElementById('editNomeMembro');
+        const editGrupoMembroInput = document.getElementById('editGrupoMembro');
+        const editNomeVisitanteInput = document.getElementById('editNomeVisitante');
+        const editTelefoneVisitanteInput = document.getElementById('editTelefoneVisitante');
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        const editMessage = document.getElementById('editMessage');
+
+
+        // Lógica para alternar visibilidade da senha
+        togglePasswordBtn.addEventListener('click', function() {
+            const type = adminPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            adminPasswordInput.setAttribute('type', type);
+            // Altera o ícone de olho aberto/fechado
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        // FUNÇÃO DE LOGIN
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const password = adminPasswordInput.value; // Pega o valor do campo de senha
+            loginError.textContent = "";
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged irá lidar com a atualização da UI
+            } catch (error) {
+                console.error("Erro de login:", error.code);
+                // Mapeamento de erros comuns
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-login-credentials') {
+                    loginError.textContent = "Email ou senha incorretos.";
+                } else if (error.code === 'auth/configuration-not-found') {
+                    loginError.textContent = "Erro: Provedor Email/Senha não habilitado no Firebase Auth.";
+                } else {
+                    loginError.textContent = "Erro ao tentar logar. Tente novamente.";
+                }
+            }
+        });
+
+        // FUNÇÃO DE LOGOUT
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await signOut(auth);
+            // onAuthStateChanged irá lidar com a atualização da UI
+        });
+
+        // OUVINTE DE ESTADO DE AUTENTICAÇÃO (Muda a tela e inicia o relatório)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuário logado
+                loginContainer.style.display = 'none';
+                reportContainer.style.display = 'block';
+                // Inicia a escuta do banco de dados para o relatório
+                setupRealtimeReport();
+            } else {
+                // Usuário deslogado
+                loginContainer.style.display = 'block';
+                reportContainer.style.display = 'none';
+                reportBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Faça login para ver o relatório.</td></tr>';
+                loginForm.reset();
+            }
+        });
+        
+        // --- FUNÇÕES DE CRUD (EDITAR / DELETAR) ---
+
+        // Função para Deletar
+        window.deleteVisitor = async (docId, visitorName) => {
+            // Usa o modal customizado em vez de alert/confirm
+            if (!confirm(`Tem certeza que deseja apagar o cadastro de ${visitorName}?`)) {
+                return;
+            }
+
+            try {
+                // Deleta o documento
+                await deleteDoc(doc(db, "cadastros", docId));
+                console.log("Documento deletado com sucesso:", docId);
+                // onSnapshot atualizará a tabela automaticamente
+            } catch (error) {
+                console.error("Erro ao deletar documento:", error);
+                // Evita usar alert(). Use console.error ou um modal customizado
+                alert("Erro ao apagar cadastro. Verifique as regras de segurança.");
+            }
+        }
+        
+        // Função para Abrir o Modal de Edição
+        window.openEditModal = (docId) => {
+            editMessage.textContent = '';
+            const data = currentReportData.get(docId);
+            
+            if (data) {
+                editDocIdInput.value = docId;
+                editNomeMembroInput.value = data.nomeMembro || '';
+                editGrupoMembroInput.value = data.grupoMembro || 'Grupo 1';
+                editNomeVisitanteInput.value = data.nomeVisitante || '';
+                editTelefoneVisitanteInput.value = data.telefoneVisitante || '';
+                
+                editModal.show();
+            } else {
+                // Evita usar alert().
+                console.error("Dados do visitante não encontrados para edição.");
+            }
+        }
+
+        // Função para Salvar Edição
+        saveEditBtn.addEventListener('click', async () => {
+            const docId = editDocIdInput.value;
+            
+            const updatedData = {
+                nomeMembro: editNomeMembroInput.value,
+                grupoMembro: editGrupoMembroInput.value,
+                nomeVisitante: editNomeVisitanteInput.value,
+                telefoneVisitante: editTelefoneVisitanteInput.value,
+            };
+
+            saveEditBtn.disabled = true;
+            saveEditBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Salvando...';
+            editMessage.textContent = '';
+
+            try {
+                // Atualiza o documento
+                await updateDoc(doc(db, "cadastros", docId), updatedData);
+                
+                editMessage.className = 'mt-3 text-center text-success';
+                editMessage.textContent = '✅ Cadastro atualizado com sucesso!';
+                setTimeout(() => {
+                    editModal.hide(); // Fecha o modal após o sucesso
+                }, 1000);
+
+            } catch (error) {
+                console.error("Erro ao atualizar documento:", error);
+                editMessage.className = 'mt-3 text-center text-danger';
+                editMessage.textContent = '❌ Erro ao atualizar. Verifique as regras de segurança (Update).';
+            } finally {
+                saveEditBtn.disabled = false;
+                saveEditBtn.innerHTML = '<i class="bi bi-save"></i> Salvar Alterações';
+            }
+        });
+        
+        // FUNÇÃO PARA CARREGAR DADOS EM TEMPO REAL (onSnapshot)
+        function setupRealtimeReport() {
+            // Cria a query: Acessa a coleção 'cadastros'
+            const q = collection(db, "cadastros"); 
+
+            // onSnapshot: Ouve as mudanças em tempo real
+            onSnapshot(q, (snapshot) => {
+                let html = '';
+                currentReportData.clear(); // Limpa os dados antigos
+                
+                if (snapshot.empty) {
+                    reportBody.innerHTML = '<tr><td colspan="5" class="text-center text-info">Nenhum cadastro encontrado.</td></tr>';
+                    return;
+                }
+
+                // Itera sobre todos os documentos
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const docId = doc.id;
+                    currentReportData.set(docId, data); // Armazena o dado no Map
+                    
+                    // Cria uma nova linha na tabela, incluindo a coluna de Ações
+                    // Note o uso de 'window.openEditModal' e 'window.deleteVisitor' para acessar as funções globais
+                    html += `
+                        <tr>
+                            <td>${data.nomeMembro || 'N/A'}</td>
+                            <td><span class="badge bg-danger">${data.grupoMembro || 'N/A'}</span></td>
+                            <td>${data.nomeVisitante || 'N/A'}</td>
+                            <td>${data.telefoneVisitante || 'N/A'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-warning me-2" onclick="window.openEditModal('${docId}')">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="window.deleteVisitor('${docId}', '${data.nomeVisitante.replace(/'/g, "\\'")}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                // Atualiza o corpo da tabela
+                reportBody.innerHTML = html;
+            }, (error) => {
+                console.error("Erro ao carregar relatório:", error);
+                reportBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Erro ao carregar dados.</td></tr>';
+            });
+        }
+        
+        // --- ADMIN INICIAL (IMPORTANTE!) ---
+        // ESTE BLOCO DEVE SER COMENTADO APÓS A PRIMEIRA EXECUÇÃO PARA NÃO TENTAR CRIAR O USUÁRIO DE NOVO
+        /*
+        createUserWithEmailAndPassword(auth, "secretaria.ls@gmail.com", "@icm2025")
+            .then((userCredential) => {
+                console.log("Usuário Admin criado com sucesso:", userCredential.user.uid);
+            })
+            .catch((error) => {
+                console.log("Erro ao tentar criar Admin (pode ser que já exista):", error.message);
+            });
+        */
+
+    </script>
+</body>
+</html>
